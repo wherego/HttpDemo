@@ -1,5 +1,6 @@
 package com.zhao.httpdemo;
 
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -14,10 +15,15 @@ import com.zhao.httpdemo.net.BaseSubscribe;
 import com.zhao.httpdemo.Entity.RepoEntity;
 import com.zhao.httpdemo.net.ResponseHandler;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -134,6 +140,8 @@ public class MainActivity extends AppCompatActivity {
                 });
 */
 
+/*
+        登录接口test
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setPassword("123456");
         loginRequest.setPhoneNumber("12345454545");
@@ -145,6 +153,69 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(new BaseSubscribe<LoginResponse>(MainActivity.this, "first test...") {
                     @Override
                     protected void _onNext(LoginResponse loginResponse) {
+                        Toast.makeText(MainActivity.this, "test er uo ", Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    protected void _onError(String message) {
+                        Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+                    }
+                });
+*/
+/*     单文件上传
+
+        File file = new File(Environment.getExternalStorageDirectory()
+                .getAbsolutePath() + "/Pictures/test111.png");
+        RequestBody requestBody =
+                RequestBody.create(MediaType.parse("image/png"), file);
+        MultipartBody.Part part1 =
+                MultipartBody.Part.createFormData("zwfile", "zwfilename.png", requestBody);
+
+        Api.getDefault()
+                .uploadFile(part1)
+                .compose(ResponseHandler.<ResponseBody>handleResult())
+                .subscribe(new BaseSubscribe<ResponseBody>(MainActivity.this, "first test...") {
+                    @Override
+                    protected void _onNext(ResponseBody responseBody) {
+                        Toast.makeText(MainActivity.this, "test er uo ", Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    protected void _onError(String message) {
+                        Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+                    }
+                });
+
+*/
+
+        /*     多文件上传*/
+
+        File file1 = new File(Environment.getExternalStorageDirectory()
+                .getAbsolutePath() + "/Pictures/test111.png");
+        RequestBody requestBody1 = RequestBody.create(MediaType.parse("image/png"), file1);
+        MultipartBody.Part part1 = MultipartBody.Part.createFormData("zwfile", "zwfilename.png", requestBody1);
+
+        File file2 = new File(Environment.getExternalStorageDirectory()
+                .getAbsolutePath() + "/Pictures/zw.txt");
+        RequestBody requestBody2 = RequestBody.create(MediaType.parse("text/plain;charset=gb2312"), file2);
+        MultipartBody.Part part2 = MultipartBody.Part.createFormData("zwtesttxt", "zw11.txt", requestBody2);
+
+        File file3 = new File(Environment.getExternalStorageDirectory()
+                .getAbsolutePath() + "/Pictures/eb.txt");
+        RequestBody requestBody3 = RequestBody.create(MediaType.parse("text/plain"), file3);
+        MultipartBody.Part part3 = MultipartBody.Part.createFormData("ebtxt", "eb1.txt", requestBody3);
+
+        List<MultipartBody.Part>  parts = new ArrayList<MultipartBody.Part>();
+        parts.add(part1);
+        parts.add(part2);
+        parts.add(part3);
+
+        Api.getDefault()
+                .uploadFiles(parts)
+                .compose(ResponseHandler.<ResponseBody>handleResult())
+                .subscribe(new BaseSubscribe<ResponseBody>(MainActivity.this, "first test...") {
+                    @Override
+                    protected void _onNext(ResponseBody responseBody) {
                         Toast.makeText(MainActivity.this, "test er uo ", Toast.LENGTH_LONG).show();
                     }
 
