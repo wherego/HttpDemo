@@ -14,9 +14,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Api {
     private static ApiService SERVICE;
-//    private static final String BASE_URL = "https://api.github.com/";
-
-    private static final String BASE_URL = "http://apis.baidu.com/apistore/weatherservice/";
+//    private static final String BASE_URL = "http://apis.baidu.com/apistore/weatherservice/";
+    private static final String BASE_URL = "http://192.168.150.50/";
 
     public static ApiService getDefault() {
         if(SERVICE == null) {

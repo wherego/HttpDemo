@@ -26,9 +26,9 @@ public class ResponseHandler {
                     @Override
                     public Observable<T> call(BaseResponseEntity<T> result) {
                         if (result.success()) {
-                            return createData(result.results);
+                            return createData(result.data);
                         } else {
-                            return Observable.error(new ApiException(result.msg));
+                            return Observable.error(new ApiException(result.message));
                         }
                     }
                 }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());

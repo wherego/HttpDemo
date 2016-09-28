@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.widget.Toast;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import retrofit2.adapter.rxjava.HttpException;
 import rx.Subscriber;
 
 /**
@@ -58,8 +59,9 @@ public abstract class BaseSubscribe<T> extends Subscriber<T> {
     @Override
     public void onError(Throwable e) {
         e.printStackTrace();
-        if (false) { //这里自行替换判断网络的代码
-            _onError("网络不可用");
+        if (e instanceof HttpException) {
+            //这里自行替换判断网络的代码
+            _onError(e.getMessage());
         } else if (e instanceof ApiException) {
             _onError(e.getMessage());
         } else {
@@ -68,6 +70,7 @@ public abstract class BaseSubscribe<T> extends Subscriber<T> {
 
         if (isShowLoadingDialog)
             dialog.dismiss();
+
     }
 
     @Override

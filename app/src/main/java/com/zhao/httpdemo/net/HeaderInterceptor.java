@@ -24,6 +24,9 @@ public class HeaderInterceptor implements Interceptor {
     public Response intercept(Interceptor.Chain chain) throws IOException {
         Request.Builder builder = chain.request()
                 .newBuilder();
+        if(headers != null) {
+            headers.put("timestamp", System.currentTimeMillis()+"");
+        }
         if (headers != null && headers.size() > 0) {
             Set<String> keys = headers.keySet();
             for (String headerKey : keys) {

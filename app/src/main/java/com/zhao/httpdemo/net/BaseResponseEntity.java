@@ -9,17 +9,16 @@ import java.io.Serializable;
  */
 
 public class BaseResponseEntity<T> implements Serializable{
-    @SerializedName("errNum")
-    public String error;
+    //Http response status
+    public int status;
 
-    @SerializedName("errMsg")
-    public String msg;
+    public int code;
 
-    @SerializedName("retData")
-    public T results;
+    public String message;
 
+    public T data;
 
     public boolean success(){
-        return error.equals("0");
+        return code == 20000;
     }
 }
