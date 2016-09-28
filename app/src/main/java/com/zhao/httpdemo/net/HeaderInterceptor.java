@@ -25,7 +25,8 @@ public class HeaderInterceptor implements Interceptor {
         Request.Builder builder = chain.request()
                 .newBuilder();
         if(headers != null) {
-            headers.put("timestamp", System.currentTimeMillis()+"");
+            headers.put("Authorization", "Bearer " + System.currentTimeMillis());
+
         }
         if (headers != null && headers.size() > 0) {
             Set<String> keys = headers.keySet();

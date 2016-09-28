@@ -23,7 +23,7 @@ public class Api {
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
             Map<String, String> headers = new HashMap<String, String>();
-            headers.put("apikey", "b3ba41f14594acea34b55504803d8aa9");
+//            headers.put("apikey", "b3ba41f14594acea34b55504803d8aa9");
             HeaderInterceptor headerInterceptor = new HeaderInterceptor(headers);
 
             OkHttpClient client = new OkHttpClient.Builder()

@@ -136,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
 
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setPassword("123456");
+        loginRequest.setPhoneNumber("12345454545");
         loginRequest.setType(1);
 
         Api.getDefault()
