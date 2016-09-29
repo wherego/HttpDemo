@@ -1,14 +1,13 @@
 package com.zhao.httpdemo.net;
 
-import com.zhao.httpdemo.Entity.LoginRequest;
-import com.zhao.httpdemo.Entity.LoginResponse;
-import com.zhao.httpdemo.Entity.RepoEntity;
-import com.zhao.httpdemo.Entity.TestEntity;
+import com.zhao.httpdemo.entity.LoginRequest;
+import com.zhao.httpdemo.entity.LoginResponse;
+import com.zhao.httpdemo.entity.RepoEntity;
+import com.zhao.httpdemo.entity.TestEntity;
 
 import java.util.List;
 
 import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -37,8 +36,10 @@ public interface ApiService {
     @GET("message/v1/test")
     Observable<BaseResponseEntity<TestEntity>> test();
 
+    //用户登录
     @POST("platform/v1/user/login")
-    Observable<BaseResponseEntity<LoginResponse>> login(@Body LoginRequest loginRequest);
+//    Observable<BaseResponseEntity<LoginResponse>> login(@Body LoginRequest loginRequest);
+    Observable<BaseResponseEntity<LoginResponse>> login(@Body String loginRequest);
 
     //上传单文件
     @Multipart

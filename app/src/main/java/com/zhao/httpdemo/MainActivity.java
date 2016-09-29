@@ -5,14 +5,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.zhao.httpdemo.Entity.LoginRequest;
-import com.zhao.httpdemo.Entity.LoginResponse;
-import com.zhao.httpdemo.Entity.TestEntity;
-import com.zhao.httpdemo.Entity.WeatherEntity;
+import com.zhao.httpdemo.entity.LoginRequest;
+import com.zhao.httpdemo.entity.LoginResponse;
 import com.zhao.httpdemo.net.Api;
 import com.zhao.httpdemo.net.ApiService;
 import com.zhao.httpdemo.net.BaseSubscribe;
-import com.zhao.httpdemo.Entity.RepoEntity;
+import com.zhao.httpdemo.entity.RepoEntity;
 import com.zhao.httpdemo.net.ResponseHandler;
 
 import java.io.File;
@@ -140,17 +138,34 @@ public class MainActivity extends AppCompatActivity {
                 });
 */
 
-/*
-        登录接口test
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setPassword("123456");
-        loginRequest.setPhoneNumber("12345454545");
-        loginRequest.setType(1);
+
+//        登录接口test
+//        LoginRequest loginRequest = new LoginRequest();
+//        loginRequest.setPassword("123456");
+//        loginRequest.setPhoneNumber("12345454545");
+//        loginRequest.setType(1);
+//
+//        Api.getDefault()
+//                .login(loginRequest)
+//                .compose(ResponseHandler.<LoginResponse>handleResult())
+//                .subscribe(new BaseSubscribe<LoginResponse>(MainActivity.this, "loading...") {
+//                    @Override
+//                    protected void _onNext(LoginResponse loginResponse) {
+//                        Toast.makeText(MainActivity.this, "test er uo ", Toast.LENGTH_LONG).show();
+//                    }
+//
+//                    @Override
+//                    protected void _onError(String message) {
+//                        Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+//                    }
+//                });
+
+
 
         Api.getDefault()
-                .login(loginRequest)
+                .login("{password\":\"12345\",\"phone_number\":\"12345454545\",\"type\":1}")
                 .compose(ResponseHandler.<LoginResponse>handleResult())
-                .subscribe(new BaseSubscribe<LoginResponse>(MainActivity.this, "first test...") {
+                .subscribe(new BaseSubscribe<LoginResponse>(MainActivity.this, "loading...") {
                     @Override
                     protected void _onNext(LoginResponse loginResponse) {
                         Toast.makeText(MainActivity.this, "test er uo ", Toast.LENGTH_LONG).show();
@@ -161,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
                     }
                 });
-*/
+
 /*     单文件上传
 
         File file = new File(Environment.getExternalStorageDirectory()
@@ -189,6 +204,7 @@ public class MainActivity extends AppCompatActivity {
 */
 
         /*     多文件上传*/
+/*
 
         File file1 = new File(Environment.getExternalStorageDirectory()
                 .getAbsolutePath() + "/Pictures/test111.png");
@@ -197,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
 
         File file2 = new File(Environment.getExternalStorageDirectory()
                 .getAbsolutePath() + "/Pictures/zw.txt");
-        RequestBody requestBody2 = RequestBody.create(MediaType.parse("text/plain;charset=gb2312"), file2);
+        RequestBody requestBody2 = RequestBody.create(MediaType.parse("text/plain"), file2);
         MultipartBody.Part part2 = MultipartBody.Part.createFormData("zwtesttxt", "zw11.txt", requestBody2);
 
         File file3 = new File(Environment.getExternalStorageDirectory()
@@ -224,6 +240,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
                     }
                 });
+*/
 
     }
 }

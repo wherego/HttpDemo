@@ -1,4 +1,4 @@
-package com.zhao.httpdemo.Entity;
+package com.zhao.httpdemo.entity;
 
 import com.google.gson.annotations.SerializedName;
 

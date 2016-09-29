@@ -60,8 +60,14 @@ public abstract class BaseSubscribe<T> extends Subscriber<T> {
     public void onError(Throwable e) {
         e.printStackTrace();
         if (e instanceof HttpException) {
-            //这里自行替换判断网络的代码
-            _onError(e.getMessage());
+       /*     //这里自行替换判断网络的代码
+            if (((HttpException) e).code() == 404) {
+                _onError("网络错误");
+            } else {
+                _onError(e.getMessage());
+            }*/
+            _onError("网络错误");
+
         } else if (e instanceof ApiException) {
             _onError(e.getMessage());
         } else {
