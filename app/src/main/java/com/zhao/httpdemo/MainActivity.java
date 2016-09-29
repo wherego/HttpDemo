@@ -11,12 +11,15 @@ import com.zhao.httpdemo.net.Api;
 import com.zhao.httpdemo.net.ApiService;
 import com.zhao.httpdemo.net.BaseSubscribe;
 import com.zhao.httpdemo.entity.RepoEntity;
+import com.zhao.httpdemo.net.HttpUtil;
 import com.zhao.httpdemo.net.ResponseHandler;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -161,9 +164,13 @@ public class MainActivity extends AppCompatActivity {
 //                });
 
 
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("password", "12345");
+        params.put("phone_number", "3413999999999");
+        params.put("type", "1");
 
         Api.getDefault()
-                .login("{password\":\"12345\",\"phone_number\":\"12345454545\",\"type\":1}")
+                .login(HttpUtil.hashMapToJson(params))
                 .compose(ResponseHandler.<LoginResponse>handleResult())
                 .subscribe(new BaseSubscribe<LoginResponse>(MainActivity.this, "loading...") {
                     @Override
