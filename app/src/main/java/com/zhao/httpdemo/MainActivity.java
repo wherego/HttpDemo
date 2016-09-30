@@ -1,46 +1,59 @@
 package com.zhao.httpdemo;
 
-import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.zhao.httpdemo.entity.LoginRequest;
-import com.zhao.httpdemo.entity.LoginResponse;
+import com.zhao.httpdemo.entity.RepoEntity;
 import com.zhao.httpdemo.net.Api;
 import com.zhao.httpdemo.net.ApiService;
-import com.zhao.httpdemo.net.BaseSubscribe;
-import com.zhao.httpdemo.entity.RepoEntity;
 import com.zhao.httpdemo.net.HttpUtil;
-import com.zhao.httpdemo.net.ResponseHandler;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
+    private ProgressBar progressBar;
+    private Handler handler = new Handler();
+    private AtomicInteger count = new AtomicInteger(1);
 
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+//        setContentView(R.layout.activity_main);
+
+        progressBar = new ProgressBar(MainActivity.this, null,android.R.attr.progressBarStyleHorizontal);
+        progressBar.setIndeterminate(false);
+//        progressBar.setMax(100);
+//        progressBar.setProgress(0);
+
+//        LinearLayout.LayoutParams lp1=new LinearLayout.LayoutParams(-2,-2);
+//        progressBar.setLayoutParams(lp1);
+        setContentView(progressBar);
+        progressBar.setMax(100);
+        progressBar.setProgress(0);
+
 
         //1.测试同步调用
 //        new Thread() {
-//            @Override
+//            @Overridek
 //            public void run() {
 //                super.run();
 //                testHttpSync();
@@ -52,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
 //        3.测试Rxjava
         testRxjava();
+
 
     }
 
@@ -163,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
 //                    }
 //                });
 
-
+/*      登陆接口
         Map<String, String> params = new HashMap<String, String>();
         params.put("password", "12345");
         params.put("phone_number", "3413999999999");
@@ -182,21 +196,37 @@ public class MainActivity extends AppCompatActivity {
                     protected void _onError(String message) {
                         Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
                     }
-                });
+                });*/
 
-/*     单文件上传
+//    单文件上传
+/*
 
         File file = new File(Environment.getExternalStorageDirectory()
                 .getAbsolutePath() + "/Pictures/test111.png");
         RequestBody requestBody =
                 RequestBody.create(MediaType.parse("image/png"), file);
+        CountingRequestBody countingRequestBody = new CountingRequestBody(requestBody, new CountingRequestBody.Listener(){
+            @Override
+            public void onRequestProgress(final long bytesWritten, final long contentLength) {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        System.out.println("@@@@@@@@@   "+ bytesWritten + "/" + contentLength +"   @@@@@@@@@@@@");
+                        progressBar.setProgress((int) (100 * bytesWritten / contentLength));
+                    }
+                }, count.incrementAndGet()*1000);
+
+
+            }
+        });
+
         MultipartBody.Part part1 =
-                MultipartBody.Part.createFormData("zwfile", "zwfilename.png", requestBody);
+                MultipartBody.Part.createFormData("zwfile", "zwfilename.png", countingRequestBody);
 
         Api.getDefault()
                 .uploadFile(part1)
                 .compose(ResponseHandler.<ResponseBody>handleResult())
-                .subscribe(new BaseSubscribe<ResponseBody>(MainActivity.this, "first test...") {
+                .subscribe(new BaseSubscribe<ResponseBody>() {
                     @Override
                     protected void _onNext(ResponseBody responseBody) {
                         Toast.makeText(MainActivity.this, "test er uo ", Toast.LENGTH_LONG).show();
@@ -207,8 +237,9 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
                     }
                 });
-
 */
+
+
 
         /*     多文件上传*/
 /*
@@ -216,7 +247,7 @@ public class MainActivity extends AppCompatActivity {
         File file1 = new File(Environment.getExternalStorageDirectory()
                 .getAbsolutePath() + "/Pictures/test111.png");
         RequestBody requestBody1 = RequestBody.create(MediaType.parse("image/png"), file1);
-        MultipartBody.Part part1 = MultipartBody.Part.createFormData("zwfile", "zwfilename.png", requestBody1);
+        MultipartBody.Part part1 = MultipartBody.Part￥￥￥￥￥￥.createFormData("zwfile", "zwfilename.png", requestBody1);
 
         File file2 = new File(Environment.getExternalStorageDirectory()
                 .getAbsolutePath() + "/Pictures/zw.txt");
@@ -246,8 +277,100 @@ public class MainActivity extends AppCompatActivity {
                     protected void _onError(String message) {
                         Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
                     }
+                });*/
+
+//      多文件上传
+
+
+//        MultipartBody.Builder builder = new MultipartBody.Builder();
+//
+//        File file1 = new File(Environment.getExternalStorageDirectory()
+//                .getAbsolutePath() + "/Pictures/test111.png");
+//        File file2 = new File(Environment.getExternalStorageDirectory()
+//                .getAbsolutePath() + "/Pictures/zw.txt");
+//        File file3 = new File(Environment.getExternalStorageDirectory()
+//                .getAbsolutePath() + "/Pictures/eb.txt");
+//
+//        RequestBody requestBody1 = RequestBody.create(MediaType.parse("image/png"), file1);
+//        RequestBody requestBody2 = RequestBody.create(MediaType.parse("text/plain"), file2);
+//        RequestBody requestBody3 = RequestBody.create(MediaType.parse("text/plain"), file3);
+//
+//        builder.addFormDataPart("zwfile", "multipartBodyzwfilename.png", requestBody1);
+//        builder.addFormDataPart("zwtesttxt", "multipartBodyzw11.txt", requestBody2);
+//        builder.addFormDataPart("ebtxt", "multipartBodyeb1.txt", requestBody3);
+//
+//        builder.setType(MultipartBody.FORM);
+//        MultipartBody multipartBody = builder.build();
+//
+//        CountingRequestBody countingRequestBody = new CountingRequestBody(multipartBody, new CountingRequestBody.Listener(){
+//            @Override
+//            public void onRequestProgress(final long bytesWritten, final long contentLength) {
+//                handler.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        System.out.println("@@@@@@@@@   "+ bytesWritten + "/" + contentLength +"   @@@@@@@@@@@@");
+//                        progressBar.setProgress((int) (100 * bytesWritten / contentLength));
+//                    }
+//                }, count.incrementAndGet()*1000);
+//            }
+//        });
+//
+//        Api.getDefault()
+//                .uploadFiles(countingRequestBody)
+//                .compose(ResponseHandler.<ResponseBody>handleResult())
+//                .subscribe(new BaseSubscribe<ResponseBody>(MainActivity.this, "multipartBody test") {
+//                    @Override
+//                    protected void _onNext(ResponseBody responseBody) {
+//                        Toast.makeText(MainActivity.this, "test er uo ", Toast.LENGTH_LONG).show();
+//                    }
+//
+//                    @Override
+//                    protected void _onError(String message) {
+//                        Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+//                    }
+//           );
+
+        //单文件下载
+        Api.getDefault()
+                .download("")
+                .subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .map(new Func1<ResponseBody, InputStream>() {
+                    @Override
+                    public InputStream call(ResponseBody responseBody) {
+                        return responseBody.byteStream();
+                    }
+                })
+                .observeOn(Schedulers.computation())
+                .doOnNext(new Action1<InputStream>() {
+                              @Override
+                              public void call(InputStream inputStream) {
+                                  try {
+                                      HttpUtil.writeFile(inputStream, new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "file.apk"));
+                                  } catch (IOException e) {
+                                      e.printStackTrace();
+                                  }
+                              }
+                          }
+                )
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<InputStream>() {
+                    @Override
+                    public void onCompleted() {
+                        progressBar.setProgress(100);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        progressBar.setProgress(100);
+                        Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT);
+                    }
+
+                    @Override
+                    public void onNext(InputStream inputStream) {
+
+                    }
                 });
-*/
 
     }
 }

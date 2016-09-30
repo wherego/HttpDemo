@@ -1,6 +1,5 @@
 package com.zhao.httpdemo.net;
 
-import com.zhao.httpdemo.entity.LoginRequest;
 import com.zhao.httpdemo.entity.LoginResponse;
 import com.zhao.httpdemo.entity.RepoEntity;
 import com.zhao.httpdemo.entity.TestEntity;
@@ -16,6 +15,8 @@ import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
+import retrofit2.http.Streaming;
+import retrofit2.http.Url;
 import rx.Observable;
 
 /**
@@ -50,5 +51,14 @@ public interface ApiService {
     @Multipart
     @POST("hahah")
     Observable<BaseResponseEntity<ResponseBody>> uploadFiles(@Part() List<MultipartBody.Part> files);
+
+    //上传多文件
+    @POST("hahah1")
+    Observable<BaseResponseEntity<ResponseBody>> uploadFiles(@Body CountingRequestBody files);
+
+    //下载文件
+    @Streaming
+    @GET
+    Observable<CountingResponseBody> download(@Url String url);
 
 }
