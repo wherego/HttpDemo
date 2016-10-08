@@ -2,9 +2,9 @@ package com.zhao.httpdemo.net;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.widget.Toast;
 
-import cn.pedant.SweetAlert.SweetAlertDialog;
+import com.zhao.httpdemo.LoadingDialog;
+
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Subscriber;
 
@@ -16,7 +16,7 @@ public abstract class BaseSubscribe<T> extends Subscriber<T> {
     private Boolean isShowLoadingDialog;
     private String msg;
     private Context context;
-    private SweetAlertDialog dialog;
+    private LoadingDialog dialog;
 
     public BaseSubscribe(Context context, String msg) {
         isShowLoadingDialog = true;
@@ -33,8 +33,10 @@ public abstract class BaseSubscribe<T> extends Subscriber<T> {
         super.onStart();
 
         if (isShowLoadingDialog) {
-            dialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE)
-                    .setTitleText(msg);
+//            dialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE)
+//                    .setTitleText(msg);
+            dialog = new LoadingDialog(context);
+            dialog.setShowText(msg);
             dialog.setCancelable(true);
             dialog.setCanceledOnTouchOutside(true);
             //点击取消的时候取消订阅

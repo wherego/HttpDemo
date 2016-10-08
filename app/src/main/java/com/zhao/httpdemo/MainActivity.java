@@ -10,25 +10,24 @@ import android.widget.Toast;
 import com.zhao.httpdemo.entity.RepoEntity;
 import com.zhao.httpdemo.net.Api;
 import com.zhao.httpdemo.net.ApiService;
-import com.zhao.httpdemo.net.HttpUtil;
+import com.zhao.httpdemo.net.BaseSubscribe;
+import com.zhao.httpdemo.net.CountingRequestBody;
+import com.zhao.httpdemo.net.ResponseHandler;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
     private ProgressBar progressBar;
@@ -282,95 +281,52 @@ public class MainActivity extends AppCompatActivity {
 //      多文件上传
 
 
-//        MultipartBody.Builder builder = new MultipartBody.Builder();
-//
-//        File file1 = new File(Environment.getExternalStorageDirectory()
-//                .getAbsolutePath() + "/Pictures/test111.png");
-//        File file2 = new File(Environment.getExternalStorageDirectory()
-//                .getAbsolutePath() + "/Pictures/zw.txt");
-//        File file3 = new File(Environment.getExternalStorageDirectory()
-//                .getAbsolutePath() + "/Pictures/eb.txt");
-//
-//        RequestBody requestBody1 = RequestBody.create(MediaType.parse("image/png"), file1);
-//        RequestBody requestBody2 = RequestBody.create(MediaType.parse("text/plain"), file2);
-//        RequestBody requestBody3 = RequestBody.create(MediaType.parse("text/plain"), file3);
-//
-//        builder.addFormDataPart("zwfile", "multipartBodyzwfilename.png", requestBody1);
-//        builder.addFormDataPart("zwtesttxt", "multipartBodyzw11.txt", requestBody2);
-//        builder.addFormDataPart("ebtxt", "multipartBodyeb1.txt", requestBody3);
-//
-//        builder.setType(MultipartBody.FORM);
-//        MultipartBody multipartBody = builder.build();
-//
-//        CountingRequestBody countingRequestBody = new CountingRequestBody(multipartBody, new CountingRequestBody.Listener(){
-//            @Override
-//            public void onRequestProgress(final long bytesWritten, final long contentLength) {
-//                handler.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        System.out.println("@@@@@@@@@   "+ bytesWritten + "/" + contentLength +"   @@@@@@@@@@@@");
-//                        progressBar.setProgress((int) (100 * bytesWritten / contentLength));
-//                    }
-//                }, count.incrementAndGet()*1000);
-//            }
-//        });
-//
-//        Api.getDefault()
-//                .uploadFiles(countingRequestBody)
-//                .compose(ResponseHandler.<ResponseBody>handleResult())
-//                .subscribe(new BaseSubscribe<ResponseBody>(MainActivity.this, "multipartBody test") {
-//                    @Override
-//                    protected void _onNext(ResponseBody responseBody) {
-//                        Toast.makeText(MainActivity.this, "test er uo ", Toast.LENGTH_LONG).show();
-//                    }
-//
-//                    @Override
-//                    protected void _onError(String message) {
-//                        Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
-//                    }
-//           );
+        MultipartBody.Builder builder = new MultipartBody.Builder();
 
-        //单文件下载
+        File file1 = new File(Environment.getExternalStorageDirectory()
+                .getAbsolutePath() + "/Pictures/test111.png");
+        File file2 = new File(Environment.getExternalStorageDirectory()
+                .getAbsolutePath() + "/Pictures/zw.txt");
+        File file3 = new File(Environment.getExternalStorageDirectory()
+                .getAbsolutePath() + "/Pictures/eb.txt");
+
+        RequestBody requestBody1 = RequestBody.create(MediaType.parse("image/png"), file1);
+        RequestBody requestBody2 = RequestBody.create(MediaType.parse("text/plain"), file2);
+        RequestBody requestBody3 = RequestBody.create(MediaType.parse("text/plain"), file3);
+
+        builder.addFormDataPart("zwfile", "multipartBodyzwfilename.png", requestBody1);
+        builder.addFormDataPart("zwtesttxt", "multipartBodyzw11.txt", requestBody2);
+        builder.addFormDataPart("ebtxt", "multipartBodyeb1.txt", requestBody3);
+
+        builder.setType(MultipartBody.FORM);
+        MultipartBody multipartBody = builder.build();
+
+        CountingRequestBody countingRequestBody = new CountingRequestBody(multipartBody, new CountingRequestBody.Listener() {
+            @Override
+            public void onRequestProgress(final long bytesWritten, final long contentLength) {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        System.out.println("@@@@@@@@@   " + bytesWritten + "/" + contentLength + "   @@@@@@@@@@@@");
+                        progressBar.setProgress((int) (100 * bytesWritten / contentLength));
+                    }
+                }, count.incrementAndGet() * 1000);
+            }
+        });
+
         Api.getDefault()
-                .download("")
-                .subscribeOn(Schedulers.io())
-                .unsubscribeOn(Schedulers.io())
-                .map(new Func1<ResponseBody, InputStream>() {
+                .uploadFiles(countingRequestBody)
+                .compose(ResponseHandler.<ResponseBody>handleResult())
+                .subscribe(new BaseSubscribe<ResponseBody>(MainActivity.this, "multipartBody test") {
                     @Override
-                    public InputStream call(ResponseBody responseBody) {
-                        return responseBody.byteStream();
-                    }
-                })
-                .observeOn(Schedulers.computation())
-                .doOnNext(new Action1<InputStream>() {
-                              @Override
-                              public void call(InputStream inputStream) {
-                                  try {
-                                      HttpUtil.writeFile(inputStream, new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "file.apk"));
-                                  } catch (IOException e) {
-                                      e.printStackTrace();
-                                  }
-                              }
-                          }
-                )
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<InputStream>() {
-                    @Override
-                    public void onCompleted() {
-                        progressBar.setProgress(100);
+                    protected void _onNext(ResponseBody responseBody) {
+                        Toast.makeText(MainActivity.this, "test er uo ", Toast.LENGTH_LONG).show();
                     }
 
                     @Override
-                    public void onError(Throwable e) {
-                        progressBar.setProgress(100);
-                        Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT);
-                    }
-
-                    @Override
-                    public void onNext(InputStream inputStream) {
-
+                    protected void _onError(String message) {
+                        Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
                     }
                 });
-
     }
 }
